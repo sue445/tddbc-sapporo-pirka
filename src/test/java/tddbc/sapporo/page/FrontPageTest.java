@@ -16,16 +16,15 @@ public class FrontPageTest extends MyPageTestCase {
 	@Test
 	public void index() throws Exception {
 		tester.start("/");
-		assertThat(tester.response.getStatus(),
-				is(equalTo(HttpServletResponse.SC_OK)));
-		assertTrue(tester.response.getOutputAsString().contains("Hello, world!"));
+		assertThat(tester.response.getStatus(), is(HttpServletResponse.SC_OK));
+		assertThat(getPageResponse(), containsString("メニュー"));
 	}
 
-	@Test
-	public void test() throws Exception {
-		tester.start("/test");
-		assertThat(tester.response.getStatus(),
-				is(equalTo(HttpServletResponse.SC_OK)));
-		assertTrue(tester.response.getOutputAsString().contains("Test page!"));
-	}
+//	@Test
+//	public void test() throws Exception {
+//		tester.start("/test");
+//		assertThat(tester.response.getStatus(),
+//				is(equalTo(HttpServletResponse.SC_OK)));
+//		assertTrue(tester.response.getOutputAsString().contains("Test page!"));
+//	}
 }

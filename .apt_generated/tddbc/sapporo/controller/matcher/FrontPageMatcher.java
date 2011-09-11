@@ -14,7 +14,6 @@ public class FrontPageMatcher extends scenic3.UrlMatcherImpl {
     // Constructor.
     private FrontPageMatcher() {
         super("tddbc.sapporo.page.FrontPage", "/");
-        super.add(new scenic3.UrlPattern("/", "test"), "tddbc.sapporo.controller._test");
         super.add(new scenic3.IndexUrlPattern("/"), "tddbc.sapporo.controller.$Index");
     }
 
