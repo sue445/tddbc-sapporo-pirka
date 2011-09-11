@@ -8,4 +8,11 @@ public abstract class AbstractPirkaPage extends PirkaPage{
 	 */
 	protected static final String VIEW_PREFIX = "WEB-INF/view/";
 
+	/**
+	 * viewModelから値を取得する(テストケースから取得するためにオーバーライド)
+	 */
+	@Override
+	public <T> T viewModel(String key) {
+		return super.viewModel(key);
+	}
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:prk="http://pirkaengine.org/" >
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8"/>
 	<title>会議室一覧 - 会議室予約システム for TDDBC</title>
 	<style type="text/css">
 <!--
@@ -26,27 +26,28 @@ th {
 	<h1>会議室一覧</h1>
 	<div>
 	<div style="text-align: right;"><a href="register.html">[登録]</a></div>
-	<table style="width: 95%; margin: 0 auto;">
-		<thead>
-		<tr>
-			<th>名称</th>
-			<th>定員</th>
-			<th>場所</th>
-		<tr>
-		</thead>
-		<tbody>
-		<tr>
-			<td><a href="view.html">大会議室</a></td>
-			<td>64名</td>
-			<td>本社2階</td>
-		</tr>
-		<tr>
-			<td><a href="view.html">ミーティングルームA</a></td>
-			<td>20名</td>
-			<td>本社2階</td>
-		</tr>
-		<tbody>
-	</table>
+
+	<div prk:if.empty="conferenceRoomList">
+		会議室が見つかりませんでした
+	</div>
+	<div prk:if.not.empty="conferenceRoomList">
+		<table style="width: 95%; margin: 0 auto;">
+			<thead>
+			<tr>
+				<th>名称</th>
+				<th>定員</th>
+				<th>場所</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr prk:for="room in conferenceRoomList">
+				<td><a href="view.html" prk:attr.href="/conferenceroom/view/${room.keyString}">${room.title}</a></td>
+				<td>${room.capacity}名</td>
+				<td>${room.place}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 	</div>
 </body>
 </html>

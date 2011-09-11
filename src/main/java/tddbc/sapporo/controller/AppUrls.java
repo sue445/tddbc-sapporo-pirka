@@ -1,7 +1,7 @@
 package tddbc.sapporo.controller;
 
 import scenic3.UrlsImpl;
-
+import tddbc.sapporo.controller.matcher.ConferenceroomPageMatcher;
 import tddbc.sapporo.controller.matcher.FrontPageMatcher;
 
 public class AppUrls extends UrlsImpl {
@@ -12,6 +12,7 @@ public class AppUrls extends UrlsImpl {
 		excludes("/favicon.ico", "/ktrwjr", "/ktrwjr/*", "/_ah/*");
 
 		// Add page matchers each time you create a new page class.
+		add(ConferenceroomPageMatcher.get());
 		add(FrontPageMatcher.get());
 	}
 }

@@ -3,8 +3,6 @@ package tddbc.sapporo.page;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.Test;
 
 public class FrontPageTest extends MyPageTestCase {
@@ -16,7 +14,7 @@ public class FrontPageTest extends MyPageTestCase {
 	@Test
 	public void index() throws Exception {
 		tester.start("/");
-		assertThat(tester.response.getStatus(), is(HttpServletResponse.SC_OK));
+		assertPageSuccess();
 		assertThat(getPageResponse(), containsString("メニュー"));
 	}
 
