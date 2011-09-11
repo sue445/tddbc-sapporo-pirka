@@ -118,6 +118,42 @@ public class ConferenceroomPageTest extends MyPageTestCase {
 		assertThat((String)getActualViewModel("title"), is("大会議室"));
 		assertThat((Integer)getActualViewModel("capacity"), is(64));
 		assertThat((String)getActualViewModel("place"), is("本社2階"));
-		assertThat((Integer)getActualViewModel("version"), is(1));
+		assertThat((Long)getActualViewModel("version"), is(1L));
+	}
+
+	@Test
+	public void edit_NotFound() throws Exception {
+		ConferenceRoomDaoTest.prepareConferenceRoom("大会議室", 64, "本社2階");
+		Key key = Datastore.allocateId(ConferenceRoom.class);
+
+		tester.start(ConferenceroomPage.PATH_EDIT + "/" + Datastore.keyToString(key));
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室一覧"));
+		assertThat((String)getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY), is("そんな会議室ありません"));
+	}
+
+	@Test
+	public void editExecute_Success() throws Exception {
+		Key key = ConferenceRoomDaoTest.prepareConferenceRoom("大会議室", 64, "本社2階");
+
+		tester.param("key", Datastore.keyToString(key));
+		tester.param("version", "1");
+		tester.param("title", "中会議室");
+		tester.param("capacity", "20");
+		tester.param("place", "本社20階");
+		tester.start(ConferenceroomPage.PATH_EDIT_EXECUTE);
+		assertPageSuccess(302);
+		assertThat(tester.isRedirect(), is(true));
+
+		Object[] errorMessageList = getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY);
+		assertThat(errorMessageList, is(nullValue()));
+
+		assertThat(tester.count(ConferenceRoom.class), is(1));
+
+		ConferenceRoom actual = Datastore.get(ConferenceRoom.class, key);
+		assertThat(actual.getVersion(), is(2L));
+		assertThat(actual.getTitle(), is("中会議室"));
+		assertThat(actual.getCapacity(), is(20));
+		assertThat(actual.getPlace(), is("本社20階"));
 	}
 }

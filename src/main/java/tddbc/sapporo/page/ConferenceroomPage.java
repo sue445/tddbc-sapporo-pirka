@@ -1,6 +1,5 @@
 package tddbc.sapporo.page;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slim3.controller.Navigation;
@@ -16,7 +15,8 @@ import scenic3.annotation.Var;
 import tddbc.sapporo.dao.ConferenceRoomDao;
 import tddbc.sapporo.meta.ConferenceRoomMeta;
 import tddbc.sapporo.model.ConferenceRoom;
-import tddbc.sapporo.validator.ConferenceRoomValidator;
+import tddbc.sapporo.validator.ConferenceRoomTitleValidator;
+import tddbc.sapporo.validator.ConferenceRoomVersionValidator;
 
 /**
  * 会議室ページ
@@ -30,8 +30,11 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 	public static final String PATH_REGISTER = "/conferenceroom/register";
 	public static final String PATH_REGISTER_EXECUTE = "/conferenceroom/registerExecute";
 	public static final String PATH_EDIT = "/conferenceroom/edit";
+	public static final String PATH_EDIT_EXECUTE = "/conferenceroom/editExecute";
 
 	public static final String ERROR_MESSAGE_KEY = "errorMessage";
+
+	private static final ConferenceRoomMeta e = ConferenceRoomMeta.get();
 
 	private final ConferenceRoomDao conferenceRoomDao = new ConferenceRoomDao();
 
@@ -59,25 +62,25 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 		return render(VIEW_PREFIX + "conferenceroom/list.html");
 	}
 
-	private List<ConferenceRoom> createMock(){
-		List<ConferenceRoom> result = new ArrayList<ConferenceRoom>();
-
-		ConferenceRoom model1 = new ConferenceRoom();
-		model1.setKey(Datastore.allocateId(ConferenceRoom.class));
-		model1.setTitle("大会議室");
-		model1.setCapacity(64);
-		model1.setPlace("本社2階");
-		result.add(model1);
-
-		ConferenceRoom model2 = new ConferenceRoom();
-		model2.setKey(Datastore.allocateId(ConferenceRoom.class));
-		model2.setTitle("ミーティングルームA");
-		model2.setCapacity(20);
-		model2.setPlace("本社2階");
-		result.add(model2);
-
-		return result;
-	}
+//	private List<ConferenceRoom> createMock(){
+//		List<ConferenceRoom> result = new ArrayList<ConferenceRoom>();
+//
+//		ConferenceRoom model1 = new ConferenceRoom();
+//		model1.setKey(Datastore.allocateId(ConferenceRoom.class));
+//		model1.setTitle("大会議室");
+//		model1.setCapacity(64);
+//		model1.setPlace("本社2階");
+//		result.add(model1);
+//
+//		ConferenceRoom model2 = new ConferenceRoom();
+//		model2.setKey(Datastore.allocateId(ConferenceRoom.class));
+//		model2.setTitle("ミーティングルームA");
+//		model2.setCapacity(20);
+//		model2.setPlace("本社2階");
+//		result.add(model2);
+//
+//		return result;
+//	}
 
 	/**
 	 * 会議室照会
@@ -117,6 +120,7 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			@RequestParam("capacity") String capacity,
 			@RequestParam("place") String place) throws Exception {
 		Validators v = createDefaultValidators();
+		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomTitleValidator());
 
 		if(!v.validate()){
 			// 入力ページに戻る
@@ -143,15 +147,13 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 	 */
 	private Validators createDefaultValidators() {
 		Validators v = new Validators(request);
-		ConferenceRoomMeta e = ConferenceRoomMeta.get();
-		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomValidator());
 		v.add(e.capacity, v.required(), v.integerType(), v.longRange(1, Long.MAX_VALUE));
 		v.add(e.place, v.required(), v.maxlength(140));
 		return v;
 	}
 
 	/**
-	 * 会議室更新
+	 * 会議室更新（入力フォーム表示）
 	 * @return
 	 * @throws Exception
 	 */
@@ -165,5 +167,43 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			viewModel(ERROR_MESSAGE_KEY, "そんな会議室ありません");
 			return list();
 		}
+	}
+
+	/**
+	 * 会議室登録（登録実行）
+	 * @return
+	 * @throws Exception
+	 */
+	@ActionPath("editExecute")
+	public Navigation editExecute(
+			@RequestParam("key") String key,
+			@RequestParam("version") String version,
+			@RequestParam("title") String title,
+			@RequestParam("capacity") String capacity,
+			@RequestParam("place") String place) throws Exception {
+		Validators v = createDefaultValidators();
+		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomTitleValidator(key));
+		v.add(e.key, v.required());
+		v.add(e.version, v.required(), new ConferenceRoomVersionValidator(key));
+
+		if(!v.validate()){
+			// 入力ページに戻る
+			viewModel("key", key);
+			viewModel("version", version);
+			viewModel("title", title);
+			viewModel("capacity", capacity);
+			viewModel("place", place);
+			viewModel(ERROR_MESSAGE_KEY, v.getErrors().toArray());
+			return render(VIEW_PREFIX + "conferenceroom/edit.html");
+		}
+
+		// 更新する
+		ConferenceRoom conferenceRoom = conferenceRoomDao.get(Datastore.stringToKey(key));
+		conferenceRoom.setTitle(title);
+		conferenceRoom.setCapacity(IntegerUtil.toPrimitiveInt(capacity));
+		conferenceRoom.setPlace(place);
+		conferenceRoomDao.put(conferenceRoom);
+
+		return redirect(PATH_LIST);
 	}
 }

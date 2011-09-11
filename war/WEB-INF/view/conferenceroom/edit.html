@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:prk="http://pirkaengine.org/" >
 <head>
-	<meta charset="UTF-8">
-	<title>大会議室 - 会議室予約システム for TDDBC</title>
+	<meta charset="UTF-8"/>
+	<title>${title} - 会議室予約システム for TDDBC</title>
 	<style type="text/css">
 <!--
 table {
@@ -48,6 +48,8 @@ th {
 			</tbody>
 		</table>
 		<div style="text-align: center">
+			<input type="hidden" name="key" prk:attr.value="keyString"/>
+			<input type="hidden" name="version" prk:attr.value="version"/>
 			<input type="submit" value="登録"/>
 			<input type="button" value="キャンセル" onclick="javascript:document.location='./view'" />
 		</div>

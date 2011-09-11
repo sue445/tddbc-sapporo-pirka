@@ -19,6 +19,7 @@ public class ConferenceroomPageMatcher extends scenic3.UrlMatcherImpl {
         super.add(new scenic3.UrlPattern("/conferenceroom", "registerExecute"), "tddbc.sapporo.controller.$conferenceroom._registerExecute");
         super.add(new scenic3.UrlPattern("/conferenceroom", "register"), "tddbc.sapporo.controller.$conferenceroom._register");
         super.add(new scenic3.UrlPattern("/conferenceroom", "list"), "tddbc.sapporo.controller.$conferenceroom._list");
+        super.add(new scenic3.UrlPattern("/conferenceroom", "editExecute"), "tddbc.sapporo.controller.$conferenceroom._editExecute");
     }
 
 
