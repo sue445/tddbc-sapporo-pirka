@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:prk="http://pirkaengine.org/" >
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8"/>
 	<title>大会議室 - 会議室予約システム for TDDBC</title>
 	<style type="text/css">
 <!--
@@ -25,26 +25,30 @@ th {
 	<p style="text-align: right">&nbsp;</p>
 	<h1>会議室情報の登録</h1>
 	<div>
-	<table style="width: 95%; margin: 0 auto;">
-		<tbody>
-		<tr>
-			<th>名称</th>
-			<td><input type="text" value="" /></td>
-		<tr>
-		<tr>
-			<th>定員</th>
-			<td><input type="text" value="" />名</td>
-		</tr>
-		<tr>
-			<th>場所</th>
-			<td><input type="text" value="" /></td>
-		</tr>
-		<tbody>
-	</table>
-	<div style="text-align: center">
-		<input type="submit" value="登録" onclick="javascript:document.location='./list.html'" />
-		<input type="button" value="キャンセル" onclick="javascript:document.location='./list.html'" />
+	<div prk:if="errorMessage">
 	</div>
+	<form action="/conferenceroom/registerExecute">
+		<table style="width: 95%; margin: 0 auto;">
+			<tbody>
+			<tr>
+				<th>名称</th>
+				<td><input type="text" value="" name="title"/></td>
+			</tr>
+			<tr>
+				<th>定員</th>
+				<td><input type="text" value="" name="capacity"/>名</td>
+			</tr>
+			<tr>
+				<th>場所</th>
+				<td><input type="text" value=""  name="place"/></td>
+			</tr>
+			</tbody>
+		</table>
+		<div style="text-align: center">
+			<input type="submit" value="登録"/>
+			<input type="button" value="キャンセル" onclick="javascript:document.location='./list'" />
+		</div>
+	</form>
 	</div>
 </body>
 </html>

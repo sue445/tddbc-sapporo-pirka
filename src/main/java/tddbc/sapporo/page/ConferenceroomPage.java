@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slim3.controller.Navigation;
+import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.util.BeanUtil;
+import org.slim3.util.IntegerUtil;
 
 import scenic3.annotation.ActionPath;
 import scenic3.annotation.Page;
+import scenic3.annotation.RequestParam;
 import scenic3.annotation.Var;
 import tddbc.sapporo.dao.ConferenceRoomDao;
+import tddbc.sapporo.meta.ConferenceRoomMeta;
 import tddbc.sapporo.model.ConferenceRoom;
 
 /**
@@ -22,8 +26,10 @@ import tddbc.sapporo.model.ConferenceRoom;
 public class ConferenceroomPage extends AbstractPirkaPage{
 	public static final String PATH_LIST = "/conferenceroom/list";
 	public static final String PATH_VIEW = "/conferenceroom/view";
+	public static final String PATH_REGISTER = "/conferenceroom/register";
+	public static final String PATH_REGISTER_EXECUTE = "/conferenceroom/registerExecute";
 
-	private static final String ERROR_MESSAGE_KEY = "errorMessage";
+	public static final String ERROR_MESSAGE_KEY = "errorMessage";
 
 	private final ConferenceRoomDao conferenceRoomDao = new ConferenceRoomDao();
 
@@ -83,8 +89,50 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			BeanUtil.copy(conferenceRoom, viewModel);
 			return render(VIEW_PREFIX + "conferenceroom/view.html");
 		} catch (Exception e) {
-			viewModel(ERROR_MESSAGE_KEY, "会議室が見つかりませんでした");
+			viewModel(ERROR_MESSAGE_KEY, "そんな会議室ありません");
 			return list();
 		}
+	}
+
+	/**
+	 * 会議室登録（入力フォーム表示）
+	 * @return
+	 * @throws Exception
+	 */
+	@ActionPath("register")
+	public Navigation register() throws Exception {
+		return render(VIEW_PREFIX + "conferenceroom/register.html");
+	}
+
+	/**
+	 * 会議室登録（登録実行）
+	 * @return
+	 * @throws Exception
+	 */
+	@ActionPath("registerExecute")
+	public Navigation registerExecute(
+			@RequestParam("title") String title,
+			@RequestParam("capacity") String capacity,
+			@RequestParam("place") String place) throws Exception {
+		Validators v = new Validators(request);
+		ConferenceRoomMeta e = ConferenceRoomMeta.get();
+		v.add(e.title, v.required());
+		v.add(e.capacity, v.required(), v.integerType());
+		v.add(e.place, v.required());
+
+		if(!v.validate()){
+			// 入力エラー
+			viewModel(ERROR_MESSAGE_KEY, v.getErrors().toArray());
+			return render(VIEW_PREFIX + "conferenceroom/register.html");
+		}
+
+		// 登録する
+		ConferenceRoom conferenceRoom = new ConferenceRoom();
+		conferenceRoom.setTitle(title);
+		conferenceRoom.setCapacity(IntegerUtil.toPrimitiveInt(capacity));
+		conferenceRoom.setPlace(place);
+		conferenceRoomDao.put(conferenceRoom);
+
+		return redirect(PATH_LIST);
 	}
 }

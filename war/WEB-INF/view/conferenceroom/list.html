@@ -25,10 +25,10 @@ th {
 	<p style="text-align: right"><a href="../">[戻る]</a></p>
 	<h1>会議室一覧</h1>
 	<div>
-	<div style="text-align: right;"><a href="register.html">[登録]</a></div>
+	<div style="text-align: right;"><a href="/conferenceroom/register">[登録]</a></div>
 
 	<div prk:if="errorMessage">
-		${errorMessage}
+		<font color="red"><b>${errorMessage}</b></font>
 	</div>
 	<div prk:if.not.empty="conferenceRoomList">
 		<table style="width: 95%; margin: 0 auto;">

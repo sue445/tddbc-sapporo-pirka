@@ -35,9 +35,8 @@ public class ConferenceroomPageTest extends MyPageTestCase {
 	@Test
 	public void view_Found() throws Exception {
 		Key key = ConferenceRoomDaoTest.prepareConferenceRoom("大会議室", 64, "本社2階");
-		tester.param("key", Datastore.keyToString(key));
 
-		tester.start(ConferenceroomPage.PATH_VIEW);
+		tester.start(ConferenceroomPage.PATH_VIEW + "/" + Datastore.keyToString(key));
 		assertPageSuccess();
 		assertThat(getPageResponse(), containsString("会議室情報"));
 		assertThat((Key)getActualViewModel("key"), is(key));
@@ -46,4 +45,65 @@ public class ConferenceroomPageTest extends MyPageTestCase {
 		assertThat((String)getActualViewModel("place"), is("本社2階"));
 	}
 
+	@Test
+	public void view_NotFound() throws Exception {
+		Key key = Datastore.allocateId(ConferenceRoom.class);
+
+		tester.start(ConferenceroomPage.PATH_VIEW + "/" + Datastore.keyToString(key));
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室一覧"));
+		assertThat((String)getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY), is("そんな会議室ありません"));
+	}
+
+	@Test
+	public void register() throws Exception {
+		tester.start(ConferenceroomPage.PATH_REGISTER);
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室情報の登録"));
+	}
+
+	@Test
+	public void registerExecute_EmptyParam() throws Exception {
+		tester.param("title", "");
+		tester.param("capacity", "");
+		tester.param("place", "");
+		tester.start(ConferenceroomPage.PATH_REGISTER_EXECUTE);
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室情報の登録"));
+
+		Object[] errorMessageList = getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY);
+		assertThat(errorMessageList.length, is(3));
+		assertThat((String)errorMessageList[0], is("titleは必須です。"));
+		assertThat((String)errorMessageList[1], is("capacityは必須です。"));
+		assertThat((String)errorMessageList[2], is("placeは必須です。"));
+	}
+
+	@Test
+	public void registerExecute_NotNumber() throws Exception {
+		tester.param("title", "大会議室");
+		tester.param("capacity", "aaa");
+		tester.param("place", "本社2階");
+		tester.start(ConferenceroomPage.PATH_REGISTER_EXECUTE);
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室情報の登録"));
+
+		Object[] errorMessageList = getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY);
+		assertThat(errorMessageList.length, is(1));
+		assertThat((String)errorMessageList[0], is("capacityは整数でなければいけません。"));
+	}
+
+	@Test
+	public void registerExecute_Success() throws Exception {
+		tester.param("title", "大会議室");
+		tester.param("capacity", "10");
+		tester.param("place", "本社2階");
+		tester.start(ConferenceroomPage.PATH_REGISTER_EXECUTE);
+		assertPageSuccess(302);
+		assertThat(tester.isRedirect(), is(true));
+
+		Object[] errorMessageList = getActualViewModel(ConferenceroomPage.ERROR_MESSAGE_KEY);
+		assertThat(errorMessageList, is(nullValue()));
+
+		assertThat(tester.count(ConferenceRoom.class), is(1));
+	}
 }

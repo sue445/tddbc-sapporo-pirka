@@ -38,8 +38,16 @@ public abstract class MyPageTestCase extends PageTestCase {
 	 * ページが正常終了したことを表明する
 	 */
 	protected void assertPageSuccess() {
+		assertPageSuccess(HttpServletResponse.SC_OK);
+	}
+
+	/**
+	 * ページが終了したことを表明する
+	 * @param responseCode レスポンスコード
+	 */
+	protected void assertPageSuccess(int responseCode) {
 		assertThat(tester.getPage(), is(instanceOf(pageClass)));
-		assertThat(tester.response.getStatus(), is(HttpServletResponse.SC_OK));
+		assertThat(tester.response.getStatus(), is(responseCode));
 	}
 
 	/**
