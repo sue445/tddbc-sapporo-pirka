@@ -106,4 +106,18 @@ public class ConferenceroomPageTest extends MyPageTestCase {
 
 		assertThat(tester.count(ConferenceRoom.class), is(1));
 	}
+
+	@Test
+	public void edit_Found() throws Exception {
+		Key key = ConferenceRoomDaoTest.prepareConferenceRoom("大会議室", 64, "本社2階");
+
+		tester.start(ConferenceroomPage.PATH_EDIT + "/" + Datastore.keyToString(key));
+		assertPageSuccess();
+		assertThat(getPageResponse(), containsString("会議室情報の修正"));
+		assertThat((Key)getActualViewModel("key"), is(key));
+		assertThat((String)getActualViewModel("title"), is("大会議室"));
+		assertThat((Integer)getActualViewModel("capacity"), is(64));
+		assertThat((String)getActualViewModel("place"), is("本社2階"));
+		assertThat((Integer)getActualViewModel("version"), is(1));
+	}
 }

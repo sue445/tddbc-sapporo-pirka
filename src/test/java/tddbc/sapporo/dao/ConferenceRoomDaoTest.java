@@ -52,4 +52,22 @@ public class ConferenceRoomDaoTest extends AppEngineTestCase {
 
 		return key;
 	}
+
+	@Test
+	public void existsTitle_Exists() throws Exception {
+		prepareConferenceRoom("大会議室", 64, "本社2階");
+
+		String title = "大会議室";
+		boolean actual = dao.existsTitle(title);
+		assertThat(actual, is(true));
+	}
+
+	@Test
+	public void existsTitle_NotExists() throws Exception {
+		prepareConferenceRoom("大会議室", 64, "本社2階");
+
+		String title = "ミーティングルームA";
+		boolean actual = dao.existsTitle(title);
+		assertThat(actual, is(false));
+	}
 }

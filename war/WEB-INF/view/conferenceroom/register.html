@@ -26,21 +26,24 @@ th {
 	<h1>会議室情報の登録</h1>
 	<div>
 	<div prk:if="errorMessage">
+		<ul>
+			<li prk:for="error in errorMessage"><font color="red"><b>${error}</b></font></li>
+		</ul>
 	</div>
 	<form action="/conferenceroom/registerExecute">
 		<table style="width: 95%; margin: 0 auto;">
 			<tbody>
 			<tr>
 				<th>名称</th>
-				<td><input type="text" value="" name="title"/></td>
+				<td><input type="text" prk:attr.value="title" name="title"/></td>
 			</tr>
 			<tr>
 				<th>定員</th>
-				<td><input type="text" value="" name="capacity"/>名</td>
+				<td><input type="text" prk:attr.value="capacity" name="capacity"/>名</td>
 			</tr>
 			<tr>
 				<th>場所</th>
-				<td><input type="text" value=""  name="place"/></td>
+				<td><input type="text" prk:attr.value="place"  name="place"/></td>
 			</tr>
 			</tbody>
 		</table>

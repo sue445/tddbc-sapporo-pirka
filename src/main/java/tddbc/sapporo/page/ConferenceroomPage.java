@@ -16,6 +16,7 @@ import scenic3.annotation.Var;
 import tddbc.sapporo.dao.ConferenceRoomDao;
 import tddbc.sapporo.meta.ConferenceRoomMeta;
 import tddbc.sapporo.model.ConferenceRoom;
+import tddbc.sapporo.validator.ConferenceRoomValidator;
 
 /**
  * 会議室ページ
@@ -28,6 +29,7 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 	public static final String PATH_VIEW = "/conferenceroom/view";
 	public static final String PATH_REGISTER = "/conferenceroom/register";
 	public static final String PATH_REGISTER_EXECUTE = "/conferenceroom/registerExecute";
+	public static final String PATH_EDIT = "/conferenceroom/edit";
 
 	public static final String ERROR_MESSAGE_KEY = "errorMessage";
 
@@ -44,10 +46,10 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 		List<ConferenceRoom> conferenceRoomList = conferenceRoomDao.findAll();
 
 		// TODO 登録ページを作るまでの暫定
-		if(conferenceRoomList.size() == 0){
-			conferenceRoomList = createMock();
-			conferenceRoomDao.put(conferenceRoomList);
-		}
+//		if(conferenceRoomList.size() == 0){
+//			conferenceRoomList = createMock();
+//			conferenceRoomDao.put(conferenceRoomList);
+//		}
 		viewModel("conferenceRoomList", conferenceRoomList);
 
 		if(conferenceRoomList.size() == 0){
@@ -114,14 +116,13 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			@RequestParam("title") String title,
 			@RequestParam("capacity") String capacity,
 			@RequestParam("place") String place) throws Exception {
-		Validators v = new Validators(request);
-		ConferenceRoomMeta e = ConferenceRoomMeta.get();
-		v.add(e.title, v.required());
-		v.add(e.capacity, v.required(), v.integerType());
-		v.add(e.place, v.required());
+		Validators v = createDefaultValidators();
 
 		if(!v.validate()){
-			// 入力エラー
+			// 入力ページに戻る
+			viewModel("title", title);
+			viewModel("capacity", capacity);
+			viewModel("place", place);
 			viewModel(ERROR_MESSAGE_KEY, v.getErrors().toArray());
 			return render(VIEW_PREFIX + "conferenceroom/register.html");
 		}
@@ -134,5 +135,35 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 		conferenceRoomDao.put(conferenceRoom);
 
 		return redirect(PATH_LIST);
+	}
+
+	/**
+	 * 登録ページと編集ページで共通のバリデータ
+	 * @return
+	 */
+	private Validators createDefaultValidators() {
+		Validators v = new Validators(request);
+		ConferenceRoomMeta e = ConferenceRoomMeta.get();
+		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomValidator());
+		v.add(e.capacity, v.required(), v.integerType(), v.longRange(1, Long.MAX_VALUE));
+		v.add(e.place, v.required(), v.maxlength(140));
+		return v;
+	}
+
+	/**
+	 * 会議室更新
+	 * @return
+	 * @throws Exception
+	 */
+	@ActionPath("edit/{key}")
+	public Navigation edit(@Var("key") String key) throws Exception {
+		try {
+			ConferenceRoom conferenceRoom = conferenceRoomDao.get(Datastore.stringToKey(key));
+			BeanUtil.copy(conferenceRoom, viewModel);
+			return render(VIEW_PREFIX + "conferenceroom/edit.html");
+		} catch (Exception e) {
+			viewModel(ERROR_MESSAGE_KEY, "そんな会議室ありません");
+			return list();
+		}
 	}
 }
