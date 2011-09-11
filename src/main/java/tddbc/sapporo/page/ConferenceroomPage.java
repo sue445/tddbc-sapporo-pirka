@@ -31,9 +31,10 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 	public static final String PATH_REGISTER_EXECUTE = "/conferenceroom/registerExecute";
 	public static final String PATH_EDIT = "/conferenceroom/edit";
 	public static final String PATH_EDIT_EXECUTE = "/conferenceroom/editExecute";
-
 	public static final String ERROR_MESSAGE_KEY = "errorMessage";
 
+	private static final int PLACE_MAX_LENGTH = 140;
+	private static final int TITLE_MAX_LENGTH = 30;
 	private static final ConferenceRoomMeta e = ConferenceRoomMeta.get();
 
 	private final ConferenceRoomDao conferenceRoomDao = new ConferenceRoomDao();
@@ -120,7 +121,7 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			@RequestParam("capacity") String capacity,
 			@RequestParam("place") String place) throws Exception {
 		Validators v = createDefaultValidators();
-		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomTitleValidator());
+		v.add(e.title, v.required(), v.maxlength(TITLE_MAX_LENGTH), new ConferenceRoomTitleValidator());
 
 		if(!v.validate()){
 			// 入力ページに戻る
@@ -148,7 +149,7 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 	private Validators createDefaultValidators() {
 		Validators v = new Validators(request);
 		v.add(e.capacity, v.required(), v.integerType(), v.longRange(1, Long.MAX_VALUE));
-		v.add(e.place, v.required(), v.maxlength(140));
+		v.add(e.place, v.required(), v.maxlength(PLACE_MAX_LENGTH));
 		return v;
 	}
 
@@ -182,7 +183,7 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			@RequestParam("capacity") String capacity,
 			@RequestParam("place") String place) throws Exception {
 		Validators v = createDefaultValidators();
-		v.add(e.title, v.required(), v.maxlength(30), new ConferenceRoomTitleValidator(key));
+		v.add(e.title, v.required(), v.maxlength(TITLE_MAX_LENGTH), new ConferenceRoomTitleValidator(key));
 		v.add(e.key, v.required());
 		v.add(e.version, v.required(), new ConferenceRoomVersionValidator(key));
 
