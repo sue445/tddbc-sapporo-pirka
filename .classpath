@@ -1,0 +1,18 @@
+<classpath>
+  <classpathentry kind="src" path="src/test/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path=".apt_generated"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="war/WEB-INF/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-library/1.2/hamcrest-library-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit-dep/4.9/junit-dep-4.9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/pirkaengine/pirka/0.3.0/pirka-0.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/pirkaengine/pirka-mobile/0.3.0/pirka-mobile-0.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/pirkaengine/pirka-slim3/0.2.0/pirka-slim3-0.2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/scenic3/scenic3/0.5.1/scenic3-0.5.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slim3/slim3/1.0.13/slim3-1.0.13.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+</classpath>
