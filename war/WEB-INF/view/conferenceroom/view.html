@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:prk="http://pirkaengine.org/" >
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8"/>
 	<title>大会議室 - 会議室予約システム for TDDBC</title>
 	<style type="text/css">
 <!--
@@ -22,25 +22,25 @@ th {
 	</style>
 </head>
 <body style="width:600px;">
-	<p style="text-align: right"><a href="./list.html">[戻る]</a></p>
+	<p style="text-align: right"><a href="/conferenceroom/list">[戻る]</a></p>
 	<h1>会議室情報</h1>
 	<div>
-	<div style="text-align: right;"><a href="edit.html">[修正する]</a></div>
+	<div style="text-align: right;"><a href="edit.html" prk:attr.href="/conferenceroom/edit/${keyString}">[修正する]</a></div>
 	<table style="width: 95%; margin: 0 auto;">
 		<tbody>
 		<tr>
 			<th>名称</th>
-			<td>大会議室</td>
-		<tr>
+			<td>${title}</td>
+		</tr>
 		<tr>
 			<th>定員</th>
-			<td>64名</td>
+			<td>${capacity}名</td>
 		</tr>
 		<tr>
 			<th>場所</th>
-			<td>本社2階</td>
+			<td>${place}</td>
 		</tr>
-		<tbody>
+		</tbody>
 	</table>
 	</div>
 </body>

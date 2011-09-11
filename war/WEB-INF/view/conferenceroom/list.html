@@ -27,8 +27,8 @@ th {
 	<div>
 	<div style="text-align: right;"><a href="register.html">[登録]</a></div>
 
-	<div prk:if.empty="conferenceRoomList">
-		会議室が見つかりませんでした
+	<div prk:if="errorMessage">
+		${errorMessage}
 	</div>
 	<div prk:if.not.empty="conferenceRoomList">
 		<table style="width: 95%; margin: 0 auto;">

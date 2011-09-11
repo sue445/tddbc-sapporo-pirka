@@ -5,19 +5,34 @@ import java.util.List;
 
 import org.slim3.controller.Navigation;
 import org.slim3.datastore.Datastore;
+import org.slim3.util.BeanUtil;
 
 import scenic3.annotation.ActionPath;
 import scenic3.annotation.Page;
+import scenic3.annotation.Var;
 import tddbc.sapporo.dao.ConferenceRoomDao;
 import tddbc.sapporo.model.ConferenceRoom;
 
+/**
+ * 会議室ページ
+ * @author sue445
+ *
+ */
 @Page("/conferenceroom")
 public class ConferenceroomPage extends AbstractPirkaPage{
 	public static final String PATH_LIST = "/conferenceroom/list";
+	public static final String PATH_VIEW = "/conferenceroom/view";
+
+	private static final String ERROR_MESSAGE_KEY = "errorMessage";
 
 	private final ConferenceRoomDao conferenceRoomDao = new ConferenceRoomDao();
 
 
+	/**
+	 * 会議室一覧
+	 * @return
+	 * @throws Exception
+	 */
 	@ActionPath("list")
 	public Navigation list() throws Exception {
 		List<ConferenceRoom> conferenceRoomList = conferenceRoomDao.findAll();
@@ -28,6 +43,10 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 			conferenceRoomDao.put(conferenceRoomList);
 		}
 		viewModel("conferenceRoomList", conferenceRoomList);
+
+		if(conferenceRoomList.size() == 0){
+			viewModel(ERROR_MESSAGE_KEY, "会議室が見つかりませんでした");
+		}
 
 		return render(VIEW_PREFIX + "conferenceroom/list.html");
 	}
@@ -50,5 +69,22 @@ public class ConferenceroomPage extends AbstractPirkaPage{
 		result.add(model2);
 
 		return result;
+	}
+
+	/**
+	 * 会議室照会
+	 * @return
+	 * @throws Exception
+	 */
+	@ActionPath("view/{key}")
+	public Navigation view(@Var("key") String key) throws Exception {
+		try {
+			ConferenceRoom conferenceRoom = conferenceRoomDao.get(Datastore.stringToKey(key));
+			BeanUtil.copy(conferenceRoom, viewModel);
+			return render(VIEW_PREFIX + "conferenceroom/view.html");
+		} catch (Exception e) {
+			viewModel(ERROR_MESSAGE_KEY, "会議室が見つかりませんでした");
+			return list();
+		}
 	}
 }
