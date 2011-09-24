@@ -1,6 +1,6 @@
 package tddbc.sapporo.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-09-11 21:28:29")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-09-21 21:54:05")
 /** */
 public final class ConferenceRoomMeta extends org.slim3.datastore.ModelMeta<tddbc.sapporo.model.ConferenceRoom> {
 
